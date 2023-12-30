@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  flask-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file: ./.env
+    ports:
+      - "5000:5000"
+
+  react-frontend:
+    build:
+      context: ./news-app-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  nginx:
+    image: nginx:1.19.0-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - certbot-etc:/etc/letsencrypt  # Mount the certbot volume where the certificates are stored
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - flask-backend
+      - react-frontend
+  
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - ./www:/var/www/certbot
+    command: certonly --staging --webroot --webroot-path=/var/www/certbot --email test@test.com --agree-tos --no-eff-email -d morningsimit.net --keep-until-expiring
+
+volumes:
+  certbot-etc:
+  certbot-var:

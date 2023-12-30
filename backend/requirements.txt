@@ -1,0 +1,9 @@
+flask==2.0.1
+flask-cors==3.0.10
+beautifulsoup4==4.9.3
+python-dotenv==0.19.1
+tenacity==8.0.1
+requests==2.26.0
+openai==0.27.0
+schedule==1.1.0
+googletrans==4.0.0-rc1
